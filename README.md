@@ -55,4 +55,27 @@ Um exemplo claro é o período entre 2000 e 2010, no qual o índice incluía emp
 
 Este trabalho consiste em um estudo de caso e, por isso, é fundamental reforçar que **não se trata de recomendação de investimento**. Qualquer estudo envolvendo finanças deve deixar isso claro. O objetivo é exclusivamente demonstrar habilidades analíticas e o uso de ferramentas como Excel, Power BI e bibliotecas do Python.
 
+Este projeto está estruturado em três etapas principais:
 
+**1ª Etapa — Coleta e Preparação dos Dados**  
+A primeira fase consiste na obtenção de dados brutos, por meio de *web scraping* e do download de informações financeiras utilizando bibliotecas Python, como o *yfinance*. Essa etapa está documentada no arquivo **"1.Criando_Dados.ipynb"**, desenvolvido em Python.  
+
+**2ª Etapa — Análises Exploratórias e Descritivas**  
+Após a coleta, foram realizadas análises exploratórias e descritivas da composição do índice Ibovespa, com aplicação de técnicas de *feature engineering*, comparações entre carteiras e outras análises relevantes. Essa etapa é abordada em dois formatos:  
+- O arquivo **"2.Analises.ipynb"** demonstra as análises feitas em Python.  
+- O arquivo **"Analises.xlsx"** ilustra a mesma etapa com o uso de Excel. Nele, as guias em **azul** representam consultas ou dados brutos, enquanto as guias em **verde** contêm gráficos e análises. Destaca-se a guia **"Carteiras_IBOV"**, que utiliza tabelas dinâmicas e está associada à análise da terceira etapa.  
+- Adicionalmente, o arquivo **"Relatorio.pbix"** (Power BI) apresenta um dashboard com a composição atual da carteira do Ibovespa, com foco na visualização informativa dos dados.
+
+**3ª Etapa — Aplicação da Teoria de Markowitz**  
+Nesta fase final, foi aplicada a Teoria de Markowitz para otimizar a carteira do Ibovespa, com foco em maximizar o retorno ajustado ao risco. Foram realizados os cálculos de rentabilidade e risco dos ativos e da carteira como um todo, geração de gráficos visuais das carteiras testadas e utilização de busca bayesiana para encontrar composições mais eficientes. Todas essas análises estão documentadas no arquivo **"3.Teoria.ipynb"**, com comentários detalhados sobre as decisões e observações feitas ao longo do processo.
+
+**Referências Utilizadas**  
+Como este projeto é um objeto de estudo, podem existir pequenas imprecisões técnicas. No entanto, ele tem como objetivo principal demonstrar uma análise completa e aplicada. Foram utilizados como base os seguintes vídeos da T2 Educação, que auxiliaram no entendimento dos cálculos e fundamentos teóricos:
+
+- [Cálculo da Rentabilidade](https://www.youtube.com/watch?v=rHZu7BbgtNc)  
+- [Cálculo do Risco](https://www.youtube.com/watch?v=7t7-vMYp7Vo)  
+- [Fronteira Eficiente — Teoria de Markowitz](https://www.youtube.com/watch?v=i5WCpU07_yo)
+
+
+**Metodologia**
+Foi comentado que o projeto foi estruturado em 3 etapas, isso se deve para explicar os arquivos jupyter notebook que foi utilizado, mas para um bom projeto de analise de dados é preciso uma metodologia, ou uma organização nas pesquisas e desenvolvimento do trabalho, neste caso utilizamos o CRISP-DM, o que pode ser contraditório, visto que o CRISP-DM tem 6 etapas. Então vamos deixar claro que quando falamos que o projeto esta estruturado em 3 etapas citamos como é os arquivos: puxando dados brutos, analise dos dados, e aplicação da teoria nos dados, veja que são 3 etapas

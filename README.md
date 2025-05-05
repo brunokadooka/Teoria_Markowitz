@@ -69,13 +69,50 @@ Após a coleta, foram realizadas análises exploratórias e descritivas da compo
 **3ª Etapa — Aplicação da Teoria de Markowitz**  
 Nesta fase final, foi aplicada a Teoria de Markowitz para otimizar a carteira do Ibovespa, com foco em maximizar o retorno ajustado ao risco. Foram realizados os cálculos de rentabilidade e risco dos ativos e da carteira como um todo, geração de gráficos visuais das carteiras testadas e utilização de busca bayesiana para encontrar composições mais eficientes. Todas essas análises estão documentadas no arquivo **"3.Teoria.ipynb"**, com comentários detalhados sobre as decisões e observações feitas ao longo do processo.
 
-**Referências Utilizadas**  
-Como este projeto é um objeto de estudo, podem existir pequenas imprecisões técnicas. No entanto, ele tem como objetivo principal demonstrar uma análise completa e aplicada. Foram utilizados como base os seguintes vídeos da T2 Educação, que auxiliaram no entendimento dos cálculos e fundamentos teóricos:
-
-- [Cálculo da Rentabilidade](https://www.youtube.com/watch?v=rHZu7BbgtNc)  
-- [Cálculo do Risco](https://www.youtube.com/watch?v=7t7-vMYp7Vo)  
-- [Fronteira Eficiente — Teoria de Markowitz](https://www.youtube.com/watch?v=i5WCpU07_yo)
-
-
 **Metodologia**
-Foi comentado que o projeto foi estruturado em 3 etapas, isso se deve para explicar os arquivos jupyter notebook que foi utilizado, mas para um bom projeto de analise de dados é preciso uma metodologia, ou uma organização nas pesquisas e desenvolvimento do trabalho, neste caso utilizamos o CRISP-DM, o que pode ser contraditório, visto que o CRISP-DM tem 6 etapas. Então vamos deixar claro que quando falamos que o projeto esta estruturado em 3 etapas citamos como é os arquivos: puxando dados brutos, analise dos dados, e aplicação da teoria nos dados, veja que são 3 etapas
+
+A metodologia de pesquisa adotada neste projeto foi o **CRISP-DM (Cross Industry Standard Process for Data Mining)**. Como mencionado anteriormente, o projeto foi estruturado em três grandes etapas, enquanto o CRISP-DM é composto por seis fases. Acontece que nem todas as etapas do CRISP-DM foram aplicadas integralmente — por exemplo, a fase de *Deployment* não foi utilizada. Por outro lado, algumas fases foram agrupadas; como é o caso de **Entendimento do Negócio** e **Entendimento dos Dados**, que foram consolidadas em uma única etapa inicial.
+
+Na seção de **Desenvolvimento**, explicaremos detalhadamente como cada fase do CRISP-DM foi abordada e a qual arquivo da estrutura do projeto cada uma corresponde.
+
+
+## 📂 2. Desenvolvimento
+
+Nesta seção, vamos discutir como o projeto foi desenvolvido. Como mencionado anteriormente, a pesquisa seguiu a metodologia **CRISP-DM**, portanto, cada subtítulo desta seção descreve uma das etapas dessa metodologia, explicando como ela se relaciona com os arquivos e a estrutura do projeto apresentados na Introdução. Antes de detalhar as etapas do CRISP-DM, é importante explicar como os **dados brutos** foram adquiridos para o estudo.
+
+### 📌 2.1. Dados Brutos
+
+Para coletar os dados, não basta apenas obter a cotação do IBOV. Afinal, o índice é composto por diversos ativos, cada um com um peso específico em sua formação. Este estudo visa encontrar uma melhor composição desses pesos e ativos, com o objetivo de tornar o índice mais rentável ou com uma distribuição risco-retorno mais eficiente. No site da B3, é possível encontrar, de forma atualizada, a composição da carteira do Ibovespa — **válida até 01/04/2025**. Este é o primeiro passo: identificar quais ativos fazem parte do IBOV. No entanto, esse documento fornece apenas o nome do ativo e seu respectivo peso de participação, o que é relevante para a análise, mas não suficiente para entender o funcionamento do índice como um todo. Para compreender melhor os ativos, é necessário obter informações adicionais como:
+
+- Setor
+- Segmento
+- Tamanho de mercado
+- Fundação da empresa
+- Tempo desde o IPO
+
+Essas informações são úteis para investigar que tipo de ativos o Ibovespa tende a priorizar ou atribuir maior peso. Como esses dados não estão organizados de forma acessível no site da B3, foi necessário realizar **web scraping** no site [Investidor10](https://investidor10.com.br/). Antes de iniciar o scraping, consultamos o arquivo [robots.txt](https://investidor10.com.br/robots.txt). Vale lembrar que esse arquivo não representa uma regra legal, mas indica quais partes do site estão mais ou menos propensas à coleta automatizada por bots. Selecionamos para raspagem apenas os **87 ativos** que compunham o Ibovespa até 01/04. As informações coletadas foram consolidadas no arquivo `scraping_ativos.csv`, localizado na pasta `data`.
+
+Para o scraping, utilizamos a biblioteca `Selenium`, já que o site possui elementos dinâmicos como anúncios e filtros que exigem interação. Bibliotecas como `requests` e `BeautifulSoup` são mais indicadas para páginas estáticas e não conseguem lidar com interações via JavaScript. Abaixo está um diagrama representando esse processo:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8ba3ba4e-4b68-48eb-ae6c-1703f9a773d8" alt="Diagrama do dataset scraping_ativos.csv" />
+</p>
+<p align="center">
+  <strong>Imagem 1: Diagrama da criação do dataset scraping_ativos.csv</strong>
+</p>
+
+Agora que temos os dados brutos da composição do Ibovespa, podemos estudar as características que compõem este índice. É verdade que na introdução já comentamos alguns filtros que há para os ativos entrarem no índice, mas é preciso saber como o índice distribui esses pesos de participação. Mas ainda não acabou a parte de puxar os dados brutos, é preciso ter o principal: os dados de cotação dos ativos.
+
+A cotação dos ativos são os dados mais importantes neste quesito. Basicamente, os dados de composição (que comentamos acima) servem apenas para entender o negócio, no caso, entender a composição do índice Ibovespa. Mas os dados que vão ser usados de fato são as cotações dos ativos. Não estamos interessados no percentual de ganho ou perda do IBOV e sim em como chegou neste percentual. Para isso, leva-se em conta o percentual do ativo ponderado pelo seu peso no IBOV.É por este motivo que, ao puxar os dados dos ativos, podemos calcular de forma manual como o índice IBOV se comportou ao longo dos anos — claro, de maneira aproximada, visto que o IBOV sempre tem mudanças.
+
+Para a cotação dos ativos, foi simples de puxar. Utilizando a biblioteca `yfinance`, podemos fazer o download da cotação dos ativos. Passamos por parâmetro que queremos os dados diários e do máximo de período que a biblioteca disponibiliza do ativo. O dataset que é baixado é de *candles*, com variáveis do tipo Date, Abertura, Máxima, Mínima e Fechamento. Tem a variável `Adj Close`, que leva em conta os dividendos, Volume e outras variáveis. Neste caso, vamos utilizar apenas a variável Fechamento para calcular o percentual e, claro, a variável Date para verificar de qual dia é a cotação. Este foi um dos vários tratamentos realizados, e assim temos o arquivo `cotacao_ativos.csv`, também localizado na pasta `data`.
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ea6ce0d0-487e-4195-9100-dc0a8b17d16e" alt="Diagrama do dataset cotacao_ativos.csv" />
+</p>
+<p align="center">
+  <strong>Imagem 2: Diagrama da criação do dataset cotacao_ativos.csv</strong>
+</p>
+
+Todo este processo de puxar os dados, fazer web scraping, uso das bibliotecas `yfinance`, `Pandas`, `Selenium`, tratamento e limpeza dos dados (limpar valores NaN, conversão de tipos de dados), e claro, habilidades envolvendo a linguagem python como funções, laços de repetição, todo o funcionamento do diagrama, está no arquivo **"1.Criando_Dados.ipynb"**. Ali, as decisões e os pensamentos de como foi implementado o código estão comentados tanto no código como em markdown. Lembrando que, na estruturação do projeto conforme dividido em 3 etapas, esta é a primeira etapa: a exportação e arranjo dos dados brutos.
